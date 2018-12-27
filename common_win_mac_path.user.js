@@ -105,10 +105,10 @@
             return;
         }
 
-        var matches = selectedText.match(/^(?:([a-zA-Z]):|\\\\(?:mediba-)?(file0\d)\\fileshare)((?:(?:\\[^\\]+)+)\\?)$/i);
+        var matches = selectedText.match(/^(?:([a-zA-Z]):|\\\\(?:mediba-)?file11\\fileshare(\d))((?:(?:\\[^\\]+)+)\\?)$/i);
         var win2mac = true;
         if (!matches) {
-            matches = selectedText.match(/^smb:\/\/(?:mediba-)?(file0\d)(?:\.mediba\.local)?\/fileshare((?:(?:\/[^\/]+)+)\/?)$/i);
+            matches = selectedText.match(/^smb:\/\/(?:mediba-)?file11(?:\.mediba\.local)?\/fileshare(\d)((?:(?:\/[^\/]+)+)\/?)$/i);
             if (!matches) {
                 return;
             }
@@ -116,14 +116,14 @@
         }
         var volume = (matches[1] || matches[2]).toLowerCase();
         var win2macVolumeMap = {
-            file02 : '2',
-            file03 : '3',
+            2 : '2',
+            3 : '3',
             v      : '2',
             w      : '3'
         };
         var mac2winVolumeMap = {
-            file02 : '2',
-            file03 : '3'
+            2 : 'V',
+            3 : 'W'
         };
         var convertedText = win2mac
             ? 'smb://file11/fileshare' + win2macVolumeMap[volume] + '' + matches[3].replace(/\\/g, '/')
