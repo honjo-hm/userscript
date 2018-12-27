@@ -17,6 +17,7 @@
 // ==/UserScript==
 
 (function($) {
+    var fServerSuffixNum = '11';
     var style = document.createElement('style');
     style.textContent = (function () {/*
         .ex-win2mac {
@@ -105,29 +106,42 @@
             return;
         }
 
-        var matches = selectedText.match(/^(?:([a-zA-Z]):|\\\\(?:mediba-)?file11\\fileshare(\d))((?:(?:\\[^\\]+)+)\\?)$/i);
-        var win2mac = true;
-        if (!matches) {
-            matches = selectedText.match(/^smb:\/\/(?:mediba-)?file11(?:\.mediba\.local)?\/fileshare(\d)((?:(?:\/[^\/]+)+)\/?)$/i);
+        var volume
+        var win2macVolumeMap
+        var win2mac
+
+        var matches = selectedText.match(/^(?:([a-zA-Z]):|\\\\(?:mediba-)?(?:file|FILE)\d{2}\\fileshare(\d))((?:(?:\\[^\\]+)+)\\?)$/i);
+
+        if (matches) {
+            volume = (matches[1] || matches[2]).toLowerCase();
+            win2mac = true;
+        } else {
+            matches = selectedText.match(/^smb:\/\/(?:mediba-)?(?:file|FILE)(\d{2})(?:\.mediba\.local)?\/fileshare(\d?)((?:(?:\/[^\/]+)+)\/?)$/i);
             if (!matches) {
                 return;
             }
             win2mac = false;
+            volume = (matches[1] === fServerSuffixNum ? matches[2] : matches[1]).toLowerCase();
         }
-        var volume = (matches[1] || matches[2]).toLowerCase();
+
         var win2macVolumeMap = {
-            2 : '2',
-            3 : '3',
+            2: '2',
+            3: '3',
+            '02' : '2',
+            '03' : '3',
             v      : '2',
             w      : '3'
         };
         var mac2winVolumeMap = {
             2 : 'V',
-            3 : 'W'
+            3 : 'W',
+            '02' : 'V',
+            '03' : 'W',
         };
+
         var convertedText = win2mac
-            ? 'smb://file11/fileshare' + win2macVolumeMap[volume] + '' + matches[3].replace(/\\/g, '/')
-            : mac2winVolumeMap[volume] + ':'+ matches[2].replace(/\//g, '\\');
+            ? 'smb://file' + fServerSuffixNum + '/fileshare' + win2macVolumeMap[volume] + '' + matches[3].replace(/\\/g, '/')
+            : mac2winVolumeMap[volume] + ':'+ matches[3].replace(/\//g, '\\');
 
         var $1stLink = $('.ex-win2mac__link:first-child').attr({href: filenameFilter(selectedText)}).text(selectedText);
         var $2ndLink = $('.ex-win2mac__link:last-child').attr({href: filenameFilter(convertedText)}).text(convertedText);
