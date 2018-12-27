@@ -116,17 +116,17 @@
         }
         var volume = (matches[1] || matches[2]).toLowerCase();
         var win2macVolumeMap = {
-            file02 : 'file02',
-            file03 : 'file03',
-            v      : 'file02',
-            w      : 'file03'
+            file02 : '2',
+            file03 : '3',
+            v      : '2',
+            w      : '3'
         };
         var mac2winVolumeMap = {
-            file02 : 'V',
-            file03 : 'W'
+            file02 : '2',
+            file03 : '3'
         };
         var convertedText = win2mac
-            ? 'smb://' + win2macVolumeMap[volume] + '/fileshare' + matches[3].replace(/\\/g, '/')
+            ? 'smb://file11/fileshare' + win2macVolumeMap[volume] + '' + matches[3].replace(/\\/g, '/')
             : mac2winVolumeMap[volume] + ':'+ matches[2].replace(/\//g, '\\');
 
         var $1stLink = $('.ex-win2mac__link:first-child').attr({href: filenameFilter(selectedText)}).text(selectedText);
